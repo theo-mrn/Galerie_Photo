@@ -4,8 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  ChevronLeft, 
-  ChevronRight, 
   Camera, 
   MapPin, 
   X, 
@@ -15,10 +13,10 @@ import {
   Grid3X3,
   Layout
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import React from "react";
+import ImageCarouselComponent from '@/components/ImageCarousel';
 
 interface PhotoStory {
   id: number;
@@ -27,162 +25,6 @@ interface PhotoStory {
   imageUrl: string | string[];
   location: string;
   displayType: "single" | "carousel";
-}
-
-interface CarouselProps {
-  images: string[];
-  title: string;
-  onImageClick: (imageUrl: string) => void;
-  onCurrentImageChange?: (currentImage: string, index: number) => void;
-  onDownloadImage?: (imageUrl: string) => void;
-}
-
-function ImageCarousel({ images, title, onImageClick, onCurrentImageChange, onDownloadImage }: CarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  
-  const onCurrentImageChangeRef = useRef(onCurrentImageChange);
-  const prevImagesRef = useRef<string[]>([]);
-  const prevCurrentIndexRef = useRef(-1);
-  
-  // Mettre à jour la ref sans causer de re-render
-  onCurrentImageChangeRef.current = onCurrentImageChange;
-  
-  useEffect(() => {
-    // Éviter les appels inutiles si rien n'a changé
-    if (
-      onCurrentImageChangeRef.current && 
-      images.length > 0 && 
-      currentIndex >= 0 && 
-      currentIndex < images.length &&
-      (
-        prevImagesRef.current !== images || 
-        prevCurrentIndexRef.current !== currentIndex
-      )
-    ) {
-      onCurrentImageChangeRef.current(images[currentIndex], currentIndex);
-      prevImagesRef.current = images;
-      prevCurrentIndexRef.current = currentIndex;
-    }
-  }, [currentIndex, images.length]); // Dépendre de la longueur au lieu du tableau complet
-  
-  const goToNext = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-  
-  const goToPrev = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-  
-  return (
-    <div className="relative overflow-hidden rounded-2xl aspect-[16/10] group shadow-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-      <div className="relative h-full w-full">
-        {images.map((src, index) => (
-          <motion.div
-            key={`image-${index}-${title}`}
-            className="absolute inset-0"
-            initial={{ opacity: 0, x: index > currentIndex ? 100 : -100 }}
-            animate={{
-              opacity: index === currentIndex ? 1 : 0,
-              x: index === currentIndex ? 0 : index > currentIndex ? 100 : -100,
-              zIndex: index === currentIndex ? 10 : 0
-            }}
-            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          >
-            <Image
-              src={src}
-              alt={`${title} - Image ${index + 1}`}
-              fill
-              className="object-contain rounded-2xl cursor-pointer transition-transform duration-700 hover:scale-105"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority={index === 0}
-              onClick={() => onImageClick(src)}
-            />
-          </motion.div>
-        ))}
-      </div>
-      
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
-      
-      {/* Action buttons - only visible on hover */}
-      <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-30">
-        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-          <Button
-            size="sm"
-            className="bg-white/20 backdrop-blur-md text-white hover:bg-white/30 rounded-full border border-white/30 shadow-lg"
-            onClick={(e) => {
-              e.stopPropagation()
-              onImageClick(images[currentIndex])
-            }}
-          >
-            <Eye className="w-4 h-4" />
-          </Button>
-        </motion.div>
-        {onDownloadImage && (
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Button
-              size="sm"
-              className="bg-white/20 backdrop-blur-md text-white hover:bg-white/30 rounded-full border border-white/30 shadow-lg"
-              onClick={(e) => {
-                e.stopPropagation()
-                onDownloadImage(images[currentIndex])
-              }}
-            >
-              <Download className="w-4 h-4" />
-            </Button>
-          </motion.div>
-        )}
-      </div>
-      
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={goToPrev}
-        className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 hover:bg-white/30 shadow-xl border border-white/20"
-        aria-label="Image précédente"
-      >
-        <ChevronLeft size={24} />
-      </motion.button>
-      
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={goToNext}
-        className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 backdrop-blur-md text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 hover:bg-white/30 shadow-xl border border-white/20"
-        aria-label="Image suivante"
-      >
-        <ChevronRight size={24} />
-      </motion.button>
-      
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-        {images.map((_, index) => (
-          <motion.button
-            key={index}
-            whileHover={{ scale: 1.2 }}
-            onClick={() => {
-              if (isAnimating) return;
-              setIsAnimating(true);
-              setCurrentIndex(index);
-              setTimeout(() => setIsAnimating(false), 500);
-            }}
-            className={cn(
-              "w-3 h-3 rounded-full transition-all duration-300 border border-white/30",
-              index === currentIndex 
-                ? "bg-white scale-125 shadow-lg" 
-                : "bg-white/50 hover:bg-white/80"
-            )}
-            aria-label={`Aller à l'image ${index + 1}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export default function PhotoPage() {
@@ -194,6 +36,12 @@ export default function PhotoPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'stories' | 'grid'>('stories');
+
+  // Add cache-busting parameter to image URL
+  const addCacheBuster = (url: string) => {
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}t=${Date.now()}`;
+  };
 
   const downloadImage = async (imageUrl: string) => {
     try {
@@ -450,12 +298,14 @@ export default function PhotoPage() {
         {/* Hero Image Background */}
         <div className="absolute inset-0 z-0">
           <Image
-            src={heroImage}
+            src={addCacheBuster(heroImage)}
             alt="Photo de couverture"
             fill
             className="object-contain cursor-pointer opacity-30"
             priority
             onClick={() => openLightbox(heroImage)}
+            loading="eager"
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40" />
         </div>
@@ -550,13 +400,15 @@ export default function PhotoPage() {
                         {story.imageUrl && typeof story.imageUrl === 'string' && story.imageUrl.trim() !== '' ? (
                           <>
                             <Image
-                              src={story.imageUrl as string}
+                              src={addCacheBuster(story.imageUrl as string)}
                               alt={story.title}
                               fill
                               className="object-contain rounded-2xl cursor-pointer transition-transform duration-700 group-hover:scale-105"
                               sizes="(max-width: 768px) 100vw, 50vw"
                               priority={index === 0}
                               onClick={() => openLightbox(story.imageUrl as string)}
+                              loading="eager"
+                              unoptimized
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                             
@@ -599,26 +451,13 @@ export default function PhotoPage() {
                       </div>
                     ) : (
                       <div className="relative">
-                        {Array.isArray(story.imageUrl) && story.imageUrl.length > 0 && story.imageUrl.some(url => url && url.trim() !== '') ? (
-                          <>
-                            <ImageCarousel 
-                              images={story.imageUrl.filter(url => url && url.trim() !== '')} 
-                              title={story.title} 
-                              onImageClick={openLightbox}
-                              onDownloadImage={downloadImage}
-                            />
-                          </>
-                        ) : (
-                          // Placeholder pour carrousel vide
-                          <div className="relative overflow-hidden rounded-2xl aspect-[16/10] shadow-2xl bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-                            <div className="flex items-center justify-center h-full text-slate-400 dark:text-slate-500">
-                              <div className="text-center">
-                                <Camera size={64} className="mx-auto mb-4 opacity-50" />
-                                <p className="text-lg font-medium">Galerie en préparation</p>
-                                <p className="text-sm">Plusieurs images seront bientôt ajoutées</p>
-                              </div>
-                            </div>
-                          </div>
+                        {story.displayType === "carousel" && Array.isArray(story.imageUrl) && story.imageUrl.length > 0 && (
+                          <ImageCarouselComponent 
+                            images={story.imageUrl.filter(url => url && url.trim() !== '')} 
+                            title={story.title} 
+                            onImageClick={openLightbox}
+                            onDownloadImage={downloadImage}
+                          />
                         )}
                       </div>
                     )}
