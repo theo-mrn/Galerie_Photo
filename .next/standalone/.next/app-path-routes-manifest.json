@@ -1,0 +1,11 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/delete-image/route": "/api/delete-image",
+  "/api/gallery-config/route": "/api/gallery-config",
+  "/api/images/hero/route": "/api/images/hero",
+  "/api/upload/route": "/api/upload",
+  "/403/page": "/403",
+  "/page": "/",
+  "/photo/page": "/photo",
+  "/photo/edit/page": "/photo/edit"
+}
