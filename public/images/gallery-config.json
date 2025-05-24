@@ -1,0 +1,29 @@
+{
+  "heroImage": "/images/hero/1748092175700_image000597.jpg",
+  "photoStories": [
+    {
+      "id": 1,
+      "title": "Premiers pas en Italieaaaaaaaaaa",
+      "description": "Les rues pavées de Rome racontent des histoires millénaires. Chaque coin de rue révèle un nouveau chapitre de l'histoire, entre architecture antique et vie moderne qui s'entremêlent parfaitement.",
+      "imageUrl": [
+        "/images/story-1/1748092703823_image.png",
+        "/images/story-1/1748093704626_dashboard.jpg"
+      ],
+      "location": "Rome, Italie",
+      "displayType": "carousel"
+    },
+    {
+      "id": 2,
+      "title": "Coucher de soleil à Santorin",
+      "description": "Les maisons blanches contrastent avec le bleu profond de la mer Égée. Le soleil couchant peint le ciel de teintes orangées et roses, créant un tableau naturel à couper le souffle.",
+      "imageUrl": [
+        "/images/stories/santorin-1.jpg",
+        "/images/stories/santorin-2.jpg",
+        "/images/stories/santorin-3.jpg"
+      ],
+      "location": "Santorin, Grèce",
+      "displayType": "carousel"
+    }
+  ],
+  "lastUpdated": "2025-05-24T13:35:55.429Z"
+}
