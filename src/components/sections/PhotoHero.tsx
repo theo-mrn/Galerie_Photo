@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Camera, Sparkles, ArrowRight, Play } from "lucide-react"
+import { Camera, Sparkles, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 const floatingPhotos = [
   {
@@ -51,7 +52,7 @@ export function PhotoHero() {
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-pink-400 to-orange-500 rounded-full opacity-15 animate-pulse delay-1000" />
       </div>
 
-      {/* Floating photos with 3D effect */}
+      {/* Floating photos with 3D effect - positioned on the right side */}
       <div className="absolute inset-0 pointer-events-none">
         {floatingPhotos.map((photo, index) => (
           <motion.div
@@ -60,8 +61,8 @@ export function PhotoHero() {
             style={{
               width: "200px",
               height: "150px",
-              left: `${20 + (index * 15)}%`,
-              top: `${25 + (index * 10)}%`,
+              left: `${50 + (index * 10)}%`,
+              top: `${20 + (index * 15)}%`,
             }}
             animate={{
               x: mousePosition.x * (10 + index * 5),
@@ -91,78 +92,76 @@ export function PhotoHero() {
         ))}
       </div>
 
-      {/* Main content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="mb-8"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 mb-6">
-            <Sparkles className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Vos souvenirs, sublimés
-            </span>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-slate-100 dark:via-blue-400 dark:to-indigo-400">
-            Mes Photos
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
-            Découvrez une collection unique de moments immortalisés, 
-            organisés avec soin dans une galerie interactive moderne.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-        >
-          <Button
-            size="lg"
-            className="group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+      {/* Main content - positioned on the left side */}
+      <div className="relative z-10 px-6 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-8"
           >
-            <Camera className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
-            Explorer la galerie
-            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="lg"
-            className="group bg-white/20 backdrop-blur-sm border-white/30 hover:bg-white/30 px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
-          >
-            <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" />
-            Voir le diaporama
-          </Button>
-        </motion.div>
-
-        {/* Stats section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto"
-        >
-          {[
-            { number: "500+", label: "Photos" },
-            { number: "25", label: "Albums" },
-            { number: "4K", label: "Qualité" }
-          ].map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">
-                {stat.number}
-              </div>
-              <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                {stat.label}
-              </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 mb-6">
+              <Sparkles className="w-4 h-4 text-blue-600" />
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                Vos souvenirs, sublimés
+              </span>
             </div>
-          ))}
-        </motion.div>
+            
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-slate-100 dark:via-blue-400 dark:to-indigo-400">
+              Mes Photos
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+              Découvrez une collection unique de moments immortalisés, 
+              organisés avec soin dans une galerie interactive moderne.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-12"
+          >
+            <Link href="/photo">
+              <Button
+                size="lg"
+                className="group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+              >
+                <Camera className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" />
+                Explorer la galerie
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+              </Button>
+            </Link>
+          </motion.div>
+
+          {/* Stats section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="grid grid-cols-3 gap-8 max-w-lg"
+          >
+            {[
+              { number: "500+", label: "Photos" },
+              { number: "25", label: "Albums" },
+              { number: "4K", label: "Qualité" }
+            ].map((stat, index) => (
+              <div key={index} className="text-left">
+                <div className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">
+                  {stat.number}
+                </div>
+                <div className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Empty space for floating photos */}
+        <div className="hidden lg:block"></div>
       </div>
 
       {/* Scroll indicator */}
