@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { uploadImage } from "@/lib/blob-storage";
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,33 +22,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Créer un nom de fichier unique
-    const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const fileName = `${timestamp}_${originalName}`;
-
-    // Définir le chemin de destination
-    const uploadDir = path.join(process.cwd(), "public", "images", folder);
-    const filePath = path.join(uploadDir, fileName);
-
-    // Créer le dossier s'il n'existe pas
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch {
-      // Le dossier existe déjà
-    }
-
-    // Convertir le fichier en buffer et l'écrire
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
-
-    // Retourner l'URL relative de l'image
-    const imageUrl = `/images/${folder}/${fileName}`;
+    // Upload vers Vercel Blob
+    const url = await uploadImage(file, folder);
 
     return NextResponse.json({
       success: true,
-      url: imageUrl,
+      url: url,
       message: "Image uploadée avec succès"
     });
 

@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble
 
-Ce système permet de gérer une galerie photo avec une interface d'édition complète. Les utilisateurs peuvent uploader des images qui sont stockées localement dans `public/images/` et organisées par sections.
+Ce système permet de gérer une galerie photo avec une interface d'édition complète. Les images sont stockées de manière sécurisée dans Vercel Blob Storage, offrant une solution de stockage évolutive et performante.
 
 ## Structure des fichiers
 
@@ -11,13 +11,14 @@ src/app/photo/
 ├── page.tsx              # Page principale de la galerie
 ├── edit/
 │   └── page.tsx          # Page d'édition
-└── api/upload/
-    └── route.ts          # API pour l'upload d'images
+└── api/
+    ├── upload/
+    │   └── route.ts      # API pour l'upload d'images
+    └── delete-image/
+        └── route.ts      # API pour la suppression d'images
 
-public/images/
-├── hero/                 # Images de couverture
-├── stories/              # Images des histoires de voyage
-└── story-{id}/          # Images spécifiques à chaque histoire
+src/lib/
+└── blob-storage.ts       # Utilitaires pour Vercel Blob Storage
 ```
 
 ## Fonctionnalités
@@ -36,27 +37,33 @@ public/images/
   - Upload d'images pour chaque section individuellement
   - Ajout/suppression d'histoires
 - **Prévisualisation** : Aperçu en temps réel des modifications
-- **Sauvegarde** : Upload automatique des images vers le serveur
+- **Sauvegarde** : Upload automatique des images vers Vercel Blob Storage
 
-### API Upload (`/api/upload`)
-- Upload sécurisé des images
-- Validation des types de fichiers (images uniquement)
-- Génération de noms de fichiers uniques
-- Organisation automatique par dossiers
+### Stockage des Images (Vercel Blob)
+- Stockage sécurisé et évolutif des images
+- URLs publiques pour un accès rapide
+- Organisation automatique par dossiers virtuels
+- Suppression facile des images inutilisées
 
 ## Utilisation
 
-### 1. Accéder à l'édition
+### 1. Configuration
+- Assurez-vous d'avoir configuré les variables d'environnement pour Vercel Blob :
+  ```
+  BLOB_READ_WRITE_TOKEN=votre_token_ici
+  ```
+
+### 2. Accéder à l'édition
 - Visitez `/photo` pour voir la galerie
 - Cliquez sur le bouton "Éditer" en bas à droite
 - Ou accédez directement à `/photo/edit`
 
-### 2. Modifier l'image de couverture
+### 3. Modifier l'image de couverture
 - Dans la section "Image de couverture"
 - Cliquez sur la zone d'upload pour sélectionner une nouvelle image
 - L'aperçu s'affiche immédiatement
 
-### 3. Gérer les histoires
+### 4. Gérer les histoires
 - Modifiez le titre, la description et la localisation
 - Choisissez le type d'affichage :
   - **Image unique** : Une seule image par histoire
@@ -64,23 +71,22 @@ public/images/
 - Uploadez des images en cliquant sur la zone d'upload
 - Supprimez des images avec le bouton X
 
-### 4. Ajouter une nouvelle histoire
+### 5. Ajouter une nouvelle histoire
 - Cliquez sur "Ajouter une histoire"
 - Remplissez les informations
 - Uploadez les images
 
-### 5. Sauvegarder
+### 6. Sauvegarder
 - Cliquez sur "Sauvegarder" pour uploader toutes les images
-- Les images sont automatiquement organisées dans les bons dossiers
+- Les images sont automatiquement stockées dans Vercel Blob
 - Retournez à la galerie avec "Aperçu"
 
-## Organisation des images
+## Organisation des images dans Vercel Blob
 
-Les images sont automatiquement organisées dans `public/images/` :
+Les images sont organisées avec des préfixes de dossiers virtuels :
 
 - `hero/` : Images de couverture
-- `stories/` : Images par défaut des histoires
-- `story-{id}/` : Images spécifiques à chaque histoire (ex: `story-1/`, `story-2/`)
+- `stories/` : Images des histoires
 
 ## Types de fichiers supportés
 
@@ -93,14 +99,9 @@ Les images sont automatiquement organisées dans `public/images/` :
 - Validation côté serveur des types de fichiers
 - Noms de fichiers sécurisés (caractères spéciaux supprimés)
 - Timestamps pour éviter les conflits de noms
+- Stockage sécurisé via Vercel Blob
 
 ## Développement
-
-### Ajouter de nouvelles fonctionnalités
-
-1. **Nouveaux champs** : Modifiez l'interface `PhotoStory` dans les deux pages
-2. **Nouveaux types d'affichage** : Ajoutez des options dans `displayType`
-3. **Validation** : Modifiez l'API upload pour de nouvelles règles
 
 ### Structure des données
 
@@ -109,7 +110,7 @@ interface PhotoStory {
   id: number;
   title: string;
   description: string;
-  imageUrl: string | string[];  // URL unique ou array pour carrousel
+  imageUrl: string | string[];  // URL Vercel Blob pour l'image
   location: string;
   displayType: "single" | "carousel";
 }
@@ -118,15 +119,11 @@ interface PhotoStory {
 ## Dépannage
 
 ### Images ne s'affichent pas
-- Vérifiez que les dossiers existent dans `public/images/`
-- Vérifiez les permissions de fichiers
+- Vérifiez que les URLs Vercel Blob sont correctes
+- Vérifiez les permissions d'accès aux blobs
 - Consultez la console pour les erreurs
 
 ### Upload échoue
-- Vérifiez la taille des fichiers (limite serveur)
-- Vérifiez les permissions d'écriture sur `public/images/`
-- Consultez les logs serveur
-
-### Erreurs de build
-- Vérifiez que tous les composants UI sont installés
-- Vérifiez les imports des icônes Lucide React 
+- Vérifiez que le token Vercel Blob est correctement configuré
+- Vérifiez les limites de taille de fichier
+- Consultez les logs pour plus de détails 

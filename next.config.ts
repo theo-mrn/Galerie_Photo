@@ -4,7 +4,11 @@ import path from 'path';
 const config: NextConfig = {
   output: "standalone",
   images: {
-    domains: ["lh3.googleusercontent.com", "images.unsplash.com"],
+    domains: [
+      "lh3.googleusercontent.com", 
+      "images.unsplash.com",
+      "kchymytwy1nf5ssn.public.blob.vercel-storage.com"
+    ],
   },
   webpack: (config, { isServer }) => {
     config.resolve.alias = {

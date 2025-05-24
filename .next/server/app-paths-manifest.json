@@ -1,7 +1,11 @@
 {
-  "/api/gallery-config/route": "app/api/gallery-config/route.js",
   "/_not-found/page": "app/_not-found/page.js",
+  "/api/delete-image/route": "app/api/delete-image/route.js",
+  "/api/gallery-config/route": "app/api/gallery-config/route.js",
+  "/api/upload/route": "app/api/upload/route.js",
+  "/api/images/hero/route": "app/api/images/hero/route.js",
   "/photo/edit/page": "app/photo/edit/page.js",
-  "/photo/page": "app/photo/page.js",
-  "/page": "app/page.js"
+  "/403/page": "app/403/page.js",
+  "/page": "app/page.js",
+  "/photo/page": "app/photo/page.js"
 }

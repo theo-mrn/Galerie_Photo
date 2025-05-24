@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { unlink } from "fs/promises";
-import path from "path";
+import { deleteImage } from "@/lib/blob-storage";
 
 export async function DELETE(request: NextRequest) {
   try {
@@ -13,19 +12,14 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Construire le chemin du fichier à partir de l'URL
-    const imagePath = imageUrl.replace(/^\//, ""); // Supprimer le / initial
-    const filePath = path.join(process.cwd(), "public", imagePath);
-
     try {
-      await unlink(filePath);
+      await deleteImage(imageUrl);
       return NextResponse.json({
         success: true,
         message: "Image supprimée avec succès"
       });
-    } catch {
-      // Le fichier n'existe peut-être pas, ce n'est pas grave
-      console.warn("Fichier non trouvé pour suppression:", filePath);
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'image:", error);
       return NextResponse.json({
         success: true,
         message: "Image déjà supprimée ou non trouvée"
