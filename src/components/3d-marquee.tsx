@@ -2,6 +2,103 @@
 
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useState, useEffect, useRef, useCallback } from "react";
+
+// Hook for intersection observer
+const useIntersectionObserver = (threshold = 0.1) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          // Stop observing once visible
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return [ref, isVisible] as const;
+};
+
+// Optimized Image component with lazy loading
+const OptimizedImage = ({
+  src,
+  alt,
+  index,
+  isVisible,
+}: {
+  src: string;
+  alt: string;
+  index: number;
+  isVisible: boolean;
+}) => {
+  const [loaded, setLoaded] = useState(false);
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    // Delay loading based on index to stagger the requests
+    if (isVisible) {
+      const timer = setTimeout(() => {
+        setShouldLoad(true);
+      }, index * 100); // 100ms delay between each image
+
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, index]);
+
+  const handleLoad = useCallback(() => {
+    setLoaded(true);
+  }, []);
+
+  if (!shouldLoad) {
+    return (
+      <div className="aspect-[970/700] rounded-lg bg-gray-200 dark:bg-gray-800 animate-pulse" />
+    );
+  }
+
+  return (
+    <div className="relative">
+      <motion.img
+        whileHover={{
+          y: -10,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: "easeInOut",
+        }}
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        onLoad={handleLoad}
+        className={cn(
+          "aspect-[970/700] rounded-lg object-cover ring ring-gray-950/5 hover:shadow-2xl transition-opacity duration-300",
+          loaded ? "opacity-100" : "opacity-0"
+        )}
+        width={970}
+        height={700}
+        style={{
+          backgroundColor: loaded ? "transparent" : "#f3f4f6",
+        }}
+      />
+      {!loaded && (
+        <div className="absolute inset-0 rounded-lg bg-gray-200 dark:bg-gray-800 animate-pulse" />
+      )}
+    </div>
+  );
+};
+
 export const ThreeDMarquee = ({
   images,
   className,
@@ -9,14 +106,18 @@ export const ThreeDMarquee = ({
   images: string[];
   className?: string;
 }) => {
+  const [containerRef, isVisible] = useIntersectionObserver(0.1);
+
   // Split the images array into 4 equal parts
   const chunkSize = Math.ceil(images.length / 4);
   const chunks = Array.from({ length: 4 }, (_, colIndex) => {
     const start = colIndex * chunkSize;
     return images.slice(start, start + chunkSize);
   });
+
   return (
     <div
+      ref={containerRef}
       className={cn(
         "mx-auto block h-[600px] overflow-hidden rounded-2xl max-sm:h-100",
         className,
@@ -31,13 +132,7 @@ export const ThreeDMarquee = ({
             className="relative top-96 right-[50%] grid size-full origin-top-left grid-cols-4 gap-8 transform-3d"
           >
             {chunks.map((subarray, colIndex) => (
-              <motion.div
-                animate={{ y: colIndex % 2 === 0 ? 100 : -100 }}
-                transition={{
-                  duration: colIndex % 2 === 0 ? 10 : 15,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                }}
+              <div
                 key={colIndex + "marquee"}
                 className="flex flex-col items-start gap-8"
               >
@@ -45,24 +140,15 @@ export const ThreeDMarquee = ({
                 {subarray.map((image, imageIndex) => (
                   <div className="relative" key={imageIndex + image}>
                     <GridLineHorizontal className="-top-4" offset="20px" />
-                    <motion.img
-                      whileHover={{
-                        y: -10,
-                      }}
-                      transition={{
-                        duration: 0.3,
-                        ease: "easeInOut",
-                      }}
-                      key={imageIndex + image}
+                    <OptimizedImage
                       src={image}
                       alt={`Image ${imageIndex + 1}`}
-                      className="aspect-[970/700] rounded-lg object-cover ring ring-gray-950/5 hover:shadow-2xl"
-                      width={970}
-                      height={700}
+                      index={colIndex * chunkSize + imageIndex}
+                      isVisible={isVisible}
                     />
                   </div>
                 ))}
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
