@@ -20,6 +20,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/images/milano/page.js"
+    ],
+    "/images/monamour/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/images/monamour/page.js"
     ]
   }
 }
