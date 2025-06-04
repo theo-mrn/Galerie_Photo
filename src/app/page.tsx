@@ -1,15 +1,13 @@
 "use client"
-
-import { PhotoHero } from "@/components/sections/PhotoHero"
-import BackToTop from "@/components/magicui/back-to-top"
-
+import {ThreeDMarqueeDemo} from "@/components/marquee"
+import {Caroussellandscape} from "@/components/Caroussellandscape"
 export default function Home() {
   return (
     <>
 
       <main>
-        <PhotoHero />
-        <BackToTop />
+        <ThreeDMarqueeDemo />
+        <Caroussellandscape />
       </main>
     </>
   )
