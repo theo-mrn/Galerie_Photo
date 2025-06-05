@@ -61,7 +61,7 @@ const data = [
   {
     category: "Milan",
     title: "Le tram tram",
-    src: "/images/milano/tram/img2.png",
+    src: "/images/milano/Tram2/img2.png",
     content: <DummyContent />,
   },
   {
