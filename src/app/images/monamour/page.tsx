@@ -1,5 +1,11 @@
 import {Testimonials} from "@/components/testimonial"
+import { VideoPlayerDemo } from "./demo"
 
 export default function Monamour() {
-  return <Testimonials />;
+  return (
+    <div>
+      <Testimonials />
+      <VideoPlayerDemo />
+    </div>
+  );
 }
