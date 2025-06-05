@@ -54,13 +54,13 @@ const DummyContent = () => {
 const data = [
   {
     category: "Milan",
-    title: "Le tram tram",
+    title: "Le tram",
     src: "/images/milano/Tram/img1.png",
     content: <DummyContent />,
   },
   {
     category: "Milan",
-    title: "Le tram tram",
+    title: "Le tram",
     src: "/images/milano/Tram2/img2.png",
     content: <DummyContent />,
   },
@@ -73,7 +73,7 @@ const data = [
 
   {
     category: "Milan",
-    title: "Le tram tram",
+    title: "Le tram",
     src: "/images/milano/Tram2/img4.jpeg",
     content: <DummyContent />,
   },
