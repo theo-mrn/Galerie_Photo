@@ -4,6 +4,7 @@ import {Starbucks} from "./Starbucks"
 import {Centre} from "./Centre"
 import {Chateau} from "./Chateau"
 import {Tram} from "./Tram"
+import {Tram2} from "./Tram2"
 export default function Milano() {
   return (
     <div>
@@ -13,6 +14,7 @@ export default function Milano() {
       <Starbucks />
       <Chateau />
       <Tram />
+      <Tram2 />
     </div>
   );
 }

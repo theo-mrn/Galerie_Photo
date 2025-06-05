@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { Carousel, Card } from "@/components/apple-cards-carousel";
 
-export function Tram() {
+export function Tram2() {
   const cards = data.map((card) => (
     <Card key={card.src} card={card} />
   ));
